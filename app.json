@@ -21,10 +21,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      }, 
+      "permissions":["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
+    
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugin":[
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission":"The app need to accesses your camera"
+        }
+      ]
+    ]
   }
 }
