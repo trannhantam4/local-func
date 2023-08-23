@@ -1,45 +1,61 @@
-import { View, Text, Button, Alert } from "react-native";
-import React from "react";
+import { View, Button, Alert, Text, Image, StyleSheet } from "react-native";
+import React, { useState } from "react";
 import {
-  useCameraPermissions,
   launchCameraAsync,
-  PermissionStatus,
+  requestCameraPermissionsAsync,
+  MediaTypeOptions,
 } from "expo-image-picker";
-
+import { Colors } from "../../constants/colors";
 export default function ImagePicker() {
-  const [cameraPermissionInfo, requestPermissions] = useCameraPermissions();
+  const [imageUri, setImageUri] = useState("");
   async function verifyPermission() {
-    if (cameraPermissionInfo.status === PermissionStatus.UNDETERMINED) {
-      const permissionResponse = await requestPermissions();
-      return permissionResponse.granted;
-    }
-    if (cameraPermissionInfo.status === PermissionStatus.DENIED) {
+    const { status } = await requestCameraPermissionsAsync();
+    console.log(status);
+    if (status !== "granted") {
       Alert.alert(
-        "Permission Needed",
-        "Please allow camera access to continue"
+        "Insufficient Permissions!",
+        "You need to grant camera permissions to use this app."
       );
       return false;
     }
-    return "true2";
+    return true;
   }
+
   async function takeImageHandler() {
     const hasPermission = await verifyPermission();
-    console.log("permission " + hasPermission);
     if (!hasPermission) {
       return;
     }
-    const img = await launchCameraAsync({
+    const image = await launchCameraAsync({
+      mediaTypes: MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [16.9],
-      quality: 0.5,
+      aspect: [4, 3], // Corrected aspect ratio array [width, height]
+      quality: 1,
     });
-    console.log(img);
+    setImageUri(image.uri);
+  }
+  let imagePreview = <Text>No image taken yet</Text>;
+  if (imageUri) {
+    imagePreview = <Image style={styles.image} source={{ uri: imageUri }} />;
   }
   return (
-    <View>
-      <View>
-        <Button title="take image" onPress={takeImageHandler}></Button>
-      </View>
+    <View style={{ flex: 1 }}>
+      <View style={styles.imageView}>{imagePreview}</View>
+      <Button title="Take Image" onPress={takeImageHandler} />
     </View>
   );
 }
+const styles = StyleSheet.create({
+  imageView: {
+    width: "100%",
+    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 8,
+    backgroundColor: Colors.primary500,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+});
