@@ -6,6 +6,7 @@ import {
   MediaTypeOptions,
 } from "expo-image-picker";
 import { Colors } from "../../constants/colors";
+import OutlineButton from "../UI/OutlineButton";
 export default function ImagePicker() {
   const [imageUri, setImageUri] = useState("");
   async function verifyPermission() {
@@ -41,7 +42,9 @@ export default function ImagePicker() {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.imageView}>{imagePreview}</View>
-      <Button title="Take Image" onPress={takeImageHandler} />
+      <OutlineButton icon={"camera"} onPress={takeImageHandler}>
+        Take Image
+      </OutlineButton>
     </View>
   );
 }
